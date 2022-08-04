@@ -1,0 +1,46 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://src/entities/player/weapons/WeaponData.gd" type="Script" id=1]
+[ext_resource path="res://src/entities/player/weapons/AtkState.gd" type="Script" id=2]
+[ext_resource path="res://src/entities/player/weapons/greatclub/playerGreatclubCharge1.tres" type="Animation" id=3]
+[ext_resource path="res://src/entities/player/weapons/ChargeAtkState.gd" type="Script" id=4]
+[ext_resource path="res://src/entities/player/weapons/HoldAtkState.gd" type="Script" id=5]
+[ext_resource path="res://src/entities/player/weapons/greatclub/playerGreatclubMaxCharge.anim" type="Animation" id=6]
+[ext_resource path="res://src/entities/player/weapons/greatclub/playerGreatclubCharge.anim" type="Animation" id=7]
+[ext_resource path="res://src/entities/player/weapons/greatclub/playerGreatclubCharge2.tres" type="Animation" id=8]
+[ext_resource path="res://src/entities/player/weapons/greatclub/playerGreatclubCharge3.tres" type="Animation" id=9]
+
+[node name="WeaponData" type="Node"]
+script = ExtResource( 1 )
+
+[node name="AtkStates" type="Node" parent="."]
+
+[node name="Attack" type="Node" parent="AtkStates"]
+script = ExtResource( 4 )
+anim = ExtResource( 7 )
+anim_name = "GreatclubCharge"
+anim_combo = "GreatclubMaxCharge"
+
+[node name="GreatclubMaxCharge" type="Node" parent="AtkStates"]
+script = ExtResource( 5 )
+anim = ExtResource( 6 )
+anim_name = "GreatclubMaxCharge"
+anim_combo = "Charge3"
+
+[node name="Charge1" type="Node" parent="AtkStates"]
+script = ExtResource( 2 )
+anim = ExtResource( 3 )
+anim_name = "GreatclubCharge1"
+damage = 1
+
+[node name="Charge2" type="Node" parent="AtkStates"]
+script = ExtResource( 2 )
+anim = ExtResource( 8 )
+anim_name = "GreatclubCharge2"
+damage = 20
+
+[node name="Charge3" type="Node" parent="AtkStates"]
+script = ExtResource( 2 )
+anim = ExtResource( 9 )
+anim_name = "GreatclubCharge3"
+damage = 300

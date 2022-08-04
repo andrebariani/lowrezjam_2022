@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://src/CamTransition.gd" type="Script" id=1]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 6, 6 )
+
+[node name="CamTransition" type="Area2D"]
+collision_mask = 0
+script = ExtResource( 1 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+shape = SubResource( 1 )
+one_way_collision = true
+
+[node name="Limits" type="Node" parent="."]
+
+[node name="TopLeft" type="Position2D" parent="Limits"]
+position = Vector2( -8, -8 )
+
+[node name="BottomRight" type="Position2D" parent="Limits"]
+position = Vector2( 8, 8 )
+
+[connection signal="body_entered" from="." to="." method="_on_CamTransition_body_entered"]

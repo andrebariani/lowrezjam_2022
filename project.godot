@@ -69,6 +69,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://src/entities/FrameTimer.gd"
 }, {
+"base": "Area2D",
+"class": "Hitbox",
+"language": "GDScript",
+"path": "res://src/entities/Hitbox.gd"
+}, {
+"base": "Area2D",
+"class": "Hurtbox",
+"language": "GDScript",
+"path": "res://src/entities/Hurtbox.gd"
+}, {
 "base": "Decorator",
 "class": "InverterDecorator",
 "language": "GDScript",
@@ -127,12 +137,12 @@ _global_script_classes=[ {
 "base": "KinematicBody2D",
 "class": "Wyvern",
 "language": "GDScript",
-"path": "res://src/entities/wyvern/WyvernBT.gd"
+"path": "res://src/entities/wyvern/Wyvern.gd"
 }, {
 "base": "KinematicBody2D",
 "class": "WyvernBT",
 "language": "GDScript",
-"path": "res://src/entities/wyvern/Wyvern.gd"
+"path": "res://src/entities/wyvern/WyvernBT.gd"
 } ]
 _global_script_class_icons={
 "ActionLeaf": "res://addons/beehave/icons/action.svg",
@@ -147,6 +157,8 @@ _global_script_class_icons={
 "ConditionLeaf": "res://addons/beehave/icons/condition.svg",
 "Decorator": "res://addons/beehave/icons/category_decorator.svg",
 "FrameTimer": "",
+"Hitbox": "",
+"Hurtbox": "",
 "InverterDecorator": "res://addons/beehave/icons/inverter.svg",
 "Leaf": "res://addons/beehave/icons/action.svg",
 "LimiterDecorator": "res://addons/beehave/icons/limiter.svg",

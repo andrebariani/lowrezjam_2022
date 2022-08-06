@@ -1,25 +1,70 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://src/entities/wyvern/WyvernBody.tscn" type="PackedScene" id=1]
 [ext_resource path="res://src/entities/wyvern/Wyvern.gd" type="Script" id=2]
 [ext_resource path="res://src/entities/wyvern/Sleep.gd" type="Script" id=3]
 [ext_resource path="res://src/entities/state_machine/StateMachine.gd" type="Script" id=4]
-[ext_resource path="res://src/entities/wyvern/Standup.gd" type="Script" id=5]
-[ext_resource path="res://src/entities/wyvern/Roar.gd" type="Script" id=6]
-[ext_resource path="res://src/entities/wyvern/Idle.gd" type="Script" id=7]
-[ext_resource path="res://src/entities/wyvern/Rush.gd" type="Script" id=8]
-[ext_resource path="res://addons/beehave/nodes/beehave_root.gd" type="Script" id=9]
-[ext_resource path="res://addons/beehave/nodes/composites/sequence.gd" type="Script" id=10]
-[ext_resource path="res://src/entities/wyvern/behaviour/SleepAction.gd" type="Script" id=11]
-[ext_resource path="res://addons/beehave/nodes/composites/selector.gd" type="Script" id=12]
-[ext_resource path="res://src/entities/wyvern/behaviour/Standup.gd" type="Script" id=13]
-[ext_resource path="res://addons/beehave/nodes/leaves/action.gd" type="Script" id=14]
+[ext_resource path="res://src/entities/wyvern/Aggro.gd" type="Script" id=7]
+[ext_resource path="res://src/entities/wyvern/WalkToPlayer.gd" type="Script" id=8]
+[ext_resource path="res://src/entities/state_machine/AnimationState.gd" type="Script" id=9]
+
+[sub_resource type="Animation" id=8]
+resource_name = "Bite"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( -4, 0 ), Vector2( 0, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.4 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 0.0, 0.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.2, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ), Vector2( 1.5, 1 ), Vector2( 1, 1 ) ]
+}
 
 [sub_resource type="Animation" id=2]
 resource_name = "Idle"
 
 [sub_resource type="Animation" id=3]
 resource_name = "Roar"
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.001, 0.2, 0.4, 0.401, 0.6, 0.8, 1 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ), Vector2( 1, 1 ), Vector2( 1, 1.4 ), Vector2( 1, 1 ), Vector2( 1, 1 ), Vector2( 1, 1.5 ), Vector2( 1, 1 ), Vector2( 1, 1.2 ) ]
+}
 
 [sub_resource type="Animation" id=6]
 resource_name = "Rush"
@@ -58,29 +103,11 @@ resource_name = "Standup"
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 5.5, 5 )
 
+[sub_resource type="RectangleShape2D" id=7]
+extents = Vector2( 64, 37 )
+
 [node name="Wyvern" type="KinematicBody2D"]
 script = ExtResource( 2 )
-
-[node name="BeehaveRoot" type="Node" parent="."]
-script = ExtResource( 9 )
-
-[node name="root" type="Node" parent="BeehaveRoot"]
-script = ExtResource( 12 )
-
-[node name="Sleep" type="Node" parent="BeehaveRoot/root"]
-script = ExtResource( 10 )
-
-[node name="SleepAction" type="Node" parent="BeehaveRoot/root/Sleep"]
-script = ExtResource( 11 )
-
-[node name="Standup" type="Node" parent="BeehaveRoot/root/Sleep"]
-script = ExtResource( 13 )
-
-[node name="Idle" type="Node" parent="BeehaveRoot/root"]
-script = ExtResource( 10 )
-
-[node name="AwaitPlayer" type="Node" parent="BeehaveRoot/root/Idle"]
-script = ExtResource( 14 )
 
 [node name="States" type="Node" parent="."]
 script = ExtResource( 4 )
@@ -89,21 +116,31 @@ script = ExtResource( 4 )
 script = ExtResource( 3 )
 
 [node name="Standup" type="Node" parent="States"]
-script = ExtResource( 5 )
+script = ExtResource( 9 )
+anim_name = "Standup"
+state_next = "Roar"
 
 [node name="Roar" type="Node" parent="States"]
-script = ExtResource( 6 )
+script = ExtResource( 9 )
+anim_name = "Roar"
+state_next = "Aggro"
 
-[node name="Idle" type="Node" parent="States"]
+[node name="Aggro" type="Node" parent="States"]
 script = ExtResource( 7 )
 
-[node name="Rush" type="Node" parent="States"]
+[node name="Bite" type="Node" parent="States"]
+script = ExtResource( 9 )
+anim_name = "Bite"
+state_next = "Aggro"
+
+[node name="WalkToPlayer" type="Node" parent="States"]
 script = ExtResource( 8 )
 
 [node name="WyvernBody" parent="." instance=ExtResource( 1 )]
 
 [node name="AnimationPlayer" parent="WyvernBody" index="1"]
 autoplay = "RESET"
+anims/Bite = SubResource( 8 )
 anims/Idle = SubResource( 2 )
 anims/Roar = SubResource( 3 )
 anims/Rush = SubResource( 6 )
@@ -161,5 +198,19 @@ margin_bottom = 6.0
 [node name="Stun" type="Node" parent="Node"]
 
 [node name="Dead" type="Node" parent="Node"]
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+enabled = true
+collision_mask = 18
+
+[node name="DetectZone" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectZone"]
+position = Vector2( 0, -27 )
+shape = SubResource( 7 )
+
+[connection signal="body_entered" from="DetectZone" to="." method="_on_DetectZone_body_entered"]
 
 [editable path="WyvernBody"]

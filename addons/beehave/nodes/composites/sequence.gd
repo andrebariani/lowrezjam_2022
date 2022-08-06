@@ -2,8 +2,11 @@ extends Composite
 
 class_name SequenceComposite, "../../icons/sequencer.svg"
 
+var current_child := ""
+
 func tick(actor, blackboard):
 	for c in get_children():
+		
 		var response = c.tick(actor, blackboard)
 		
 		if c is ConditionLeaf:
@@ -14,5 +17,6 @@ func tick(actor, blackboard):
 			if c is ActionLeaf and response == RUNNING:
 				blackboard.set("running_action", c)
 			return response
+			
 
 	return SUCCESS

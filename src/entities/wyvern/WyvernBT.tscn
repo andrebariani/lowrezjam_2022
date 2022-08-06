@@ -1,21 +1,60 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://src/entities/wyvern/WyvernBT.gd" type="Script" id=1]
 [ext_resource path="res://addons/beehave/nodes/beehave_root.gd" type="Script" id=2]
 [ext_resource path="res://src/entities/wyvern/WyvernBody.tscn" type="PackedScene" id=3]
-[ext_resource path="res://src/entities/wyvern/is_target_nearby.gd" type="Script" id=4]
-[ext_resource path="res://addons/beehave/nodes/leaves/action.gd" type="Script" id=5]
-[ext_resource path="res://src/entities/wyvern/load_mouse.gd" type="Script" id=6]
-[ext_resource path="res://src/entities/wyvern/go_to_mouse.gd" type="Script" id=7]
+[ext_resource path="res://src/entities/wyvern/behaviour/AwaitAnim.gd" type="Script" id=4]
+[ext_resource path="res://src/entities/wyvern/React.gd" type="Script" id=5]
+[ext_resource path="res://src/entities/wyvern/behaviour/ApproachPlayer.gd" type="Script" id=6]
+[ext_resource path="res://src/entities/wyvern/behaviour/GetPlayerLastPos.gd" type="Script" id=7]
+[ext_resource path="res://src/entities/wyvern/behaviour/IsPlayerVisible.gd" type="Script" id=9]
+[ext_resource path="res://src/entities/wyvern/behaviour/LoadPlayer.gd" type="Script" id=10]
 [ext_resource path="res://addons/beehave/nodes/composites/selector.gd" type="Script" id=11]
 [ext_resource path="res://src/entities/wyvern/behaviour/Standup.gd" type="Script" id=12]
 [ext_resource path="res://addons/beehave/nodes/composites/sequence.gd" type="Script" id=13]
 
 [sub_resource type="Animation" id=2]
 resource_name = "Idle"
+loop = true
 
 [sub_resource type="Animation" id=3]
 resource_name = "Roar"
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6, 0.8 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( 0, 0 ), Vector2( 0, 0 ), Vector2( 0, 0 ), Vector2( 0, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:rotation_degrees")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6, 0.8 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 0.0, 0.0, 0.0, 0.0 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath(".:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.2, 0.4, 0.6, 0.8 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ), Vector2( 1.5, 1.5 ), Vector2( 1, 1 ), Vector2( 1.5, 1.5 ), Vector2( 1, 1 ) ]
+}
 
 [sub_resource type="Animation" id=6]
 resource_name = "Rush"
@@ -54,6 +93,9 @@ resource_name = "Standup"
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 5.5, 5 )
 
+[sub_resource type="RectangleShape2D" id=7]
+extents = Vector2( 64, 32 )
+
 [node name="Wyvern" type="KinematicBody2D"]
 script = ExtResource( 1 )
 
@@ -63,30 +105,49 @@ script = ExtResource( 2 )
 [node name="root" type="Node" parent="BeehaveRoot"]
 script = ExtResource( 11 )
 
-[node name="GoToMouse" type="Node" parent="BeehaveRoot/root"]
+[node name="AttackPlayer" type="Node" parent="BeehaveRoot/root"]
 script = ExtResource( 13 )
 
-[node name="load_mouse" type="Node" parent="BeehaveRoot/root/GoToMouse"]
-script = ExtResource( 6 )
-blackboard_key = "mouse"
+[node name="LoadPlayer" type="Node" parent="BeehaveRoot/root/AttackPlayer"]
+script = ExtResource( 10 )
 
-[node name="is_target_nearby" type="Node" parent="BeehaveRoot/root/GoToMouse"]
+[node name="IsPlayerVisible" type="Node" parent="BeehaveRoot/root/AttackPlayer"]
+script = ExtResource( 9 )
+
+[node name="Aggro" type="Node" parent="BeehaveRoot/root/AttackPlayer"]
+script = ExtResource( 11 )
+
+[node name="AwaitAnim" type="Node" parent="BeehaveRoot/root/AttackPlayer/Aggro"]
 script = ExtResource( 4 )
-detection_radius = 8.0
-target_key = "mouse"
+anim_name = "Roar"
 
-[node name="go to mouse" type="Node" parent="BeehaveRoot/root/GoToMouse"]
-script = ExtResource( 7 )
-target_key = "mouse"
+[node name="ShouldRoar" type="Node" parent="BeehaveRoot/root/AttackPlayer/Aggro"]
+script = ExtResource( 11 )
 
-[node name="Idle" type="Node" parent="BeehaveRoot/root"]
-script = ExtResource( 13 )
+[node name="React" type="Node" parent="BeehaveRoot/root/AttackPlayer/Aggro/ShouldRoar"]
+script = ExtResource( 5 )
 
-[node name="Standup" type="Node" parent="BeehaveRoot/root/Idle"]
+[node name="Roar" type="Node" parent="BeehaveRoot/root/AttackPlayer/Aggro/ShouldRoar"]
 script = ExtResource( 12 )
 
-[node name="Idle" type="Node" parent="BeehaveRoot/root/Idle"]
-script = ExtResource( 5 )
+[node name="GoToPlayer" type="Node" parent="BeehaveRoot/root/AttackPlayer/Aggro"]
+script = ExtResource( 13 )
+
+[node name="GetPlayerLastPos" type="Node" parent="BeehaveRoot/root/AttackPlayer/Aggro/GoToPlayer"]
+script = ExtResource( 7 )
+
+[node name="ApproachPlayer" type="Node" parent="BeehaveRoot/root/AttackPlayer/Aggro/GoToPlayer"]
+script = ExtResource( 6 )
+__meta__ = {
+"_editor_description_": ""
+}
+target_key = "player_last_pos"
+
+[node name="NoBattle" type="Node" parent="BeehaveRoot/root"]
+script = ExtResource( 13 )
+
+[node name="Idle" type="Node" parent="BeehaveRoot/root/NoBattle"]
+script = ExtResource( 12 )
 
 [node name="WyvernBody" parent="." instance=ExtResource( 3 )]
 
@@ -149,5 +210,22 @@ margin_bottom = 6.0
 [node name="Stun" type="Node" parent="Node"]
 
 [node name="Dead" type="Node" parent="Node"]
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+enabled = true
+cast_to = Vector2( -31, 0 )
+collision_mask = 18
+collide_with_areas = true
+
+[node name="DetectZone" type="Area2D" parent="."]
+visible = false
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectZone"]
+position = Vector2( 0, -24 )
+shape = SubResource( 7 )
+
+[connection signal="body_entered" from="DetectZone" to="." method="_on_DetectZone_body_entered"]
 
 [editable path="WyvernBody"]

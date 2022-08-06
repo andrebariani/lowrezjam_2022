@@ -166,4 +166,5 @@ func approach(a, b, amount):
 
 
 func _on_Hurtbox_area_entered(_area):
-	print_debug("oh nho")
+	if _area is Hitbox:
+		print_debug("oh no")

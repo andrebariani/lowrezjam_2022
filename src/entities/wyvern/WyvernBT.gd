@@ -1,5 +1,5 @@
 extends KinematicBody2D
-class_name Wyvern
+class_name WyvernBT
 
 signal hit_taken
 signal animation_finished
@@ -7,11 +7,13 @@ signal animation_finished
 onready var ai := $BeehaveRoot
 onready var body := $WyvernBody
 onready var anim := $WyvernBody/AnimationPlayer
+onready var raycast := $RayCast2D
 
 onready var labelState = $CanvasLayer/VBoxContainer/State
 
-onready var player = get_tree().get_nodes_in_group("Player")[0]
+onready var player: Player = null
 
+var rage = false
 var velocity := Vector2.ZERO
 
 func _ready():
@@ -36,6 +38,7 @@ func move_to(target_position: Vector2, delta: float):
 func _on_hit_taken(hitbox, hurtbox):
 	print_debug("Ouch! Got %d damage at the %s!" % [hitbox.damage, hurtbox.ZONE])
 	emit_signal("hit_taken", hitbox, hurtbox)
+	rage = true
 	#if stateMachine.node_state.has_method("_on_hit_taken"):
 	#	stateMachine.node_state._on_hit_taken(hitbox, hurtbox)
 		
@@ -50,3 +53,8 @@ func play_anim(anim_name):
 
 func setup_state_queue(_state_next):
 	labelState.set_text(_state_next)
+
+
+func _on_DetectZone_body_entered(body):
+	if body is Player:
+		player = body

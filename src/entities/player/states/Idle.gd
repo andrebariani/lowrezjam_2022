@@ -2,6 +2,7 @@ extends State
 
 func begin():
 	e.floor_jump = false
+	e.animPlayer.play("Idle")
 
 func run(_delta):
 	if not e.is_on_wall():

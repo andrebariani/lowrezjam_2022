@@ -29,7 +29,7 @@ func run(_delta):
 		e.roll_input = dir
 		end("Roll")
 	elif e.get_input("jump_jp"):
-		e.apply_jump(e.max_jump + 50)
+		e.apply_jump(e.max_jump + 24)
 		e.velocity_move = e.last_velocity_move_sign * -1 * (e.max_speed)
 		e.cooldowns.air_momentum.value = 0
 		end("Air")

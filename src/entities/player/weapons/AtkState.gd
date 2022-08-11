@@ -22,11 +22,14 @@ func begin():
 	timer.value = 0
 	timer.max_value = frames_for_next
 	
+	e.enablers.move = false
 	attacked = false
 
 
 func run(_delta):
 	timer.tick()
+	
+	e.velocity_move = e.approach(e.velocity_move, 0, e.floor_friction)
 	
 	if e.get_input('atk'):
 		attacked = true
@@ -37,6 +40,7 @@ func run(_delta):
 
 
 func before_end(_next_state):
+	e.enablers.move = true
 	weapon.reset_hit_connections()
 
 

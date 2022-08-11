@@ -20,16 +20,16 @@ func begin():
 		e.anim.play("TurnAround")
 		turning = true
 	else:
-		e.anim.play("Run")
+		e.anim.play("Fly")
 	
 	e.align_to_target(last_player_pos)
 
 func run(_delta):
 	if not turning:
-		if e.is_wall():
-			end("Aggro")
+		if e.is_wall_air():
+			end("AirAggro")
 		elif e.move_to_x(last_player_pos, near_radius) or e.is_near_player(near_radius):
-			end("Aggro")
+			end("AirAggro")
 
 func before_end(_next_state):
 	if e.is_connected("animation_finished", self, "_on_animation_finished"):
@@ -39,5 +39,5 @@ func _on_animation_finished(_anim_name):
 	print_debug(_anim_name)
 	if _anim_name == "TurnAround":
 		turning = false
-		e.anim.play("Run")
+		e.anim.play("Fly")
 		

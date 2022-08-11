@@ -7,7 +7,10 @@ onready var limit_br = get_node("Limits/BottomRight").position
 func _on_CamTransition_body_entered(body):
 	if body is Player:
 		camera.limit_top = limit_tl.y
-		camera.limit_left = limit_tl.x
 		camera.limit_bottom = limit_br.y
-		camera.limit_right = limit_br.x
-		
+
+func full_limit():
+	camera.limit_top = limit_tl.y
+	camera.limit_left = limit_tl.x
+	camera.limit_bottom = limit_br.y
+	camera.limit_right = limit_br.x

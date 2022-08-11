@@ -178,7 +178,13 @@ _global_script_class_icons={
 
 config/name="lowrezjam_2022"
 run/main_scene="res://src/Main.tscn"
+boot_splash/bg_color=Color( 0.141176, 0.141176, 0.141176, 1 )
 config/icon="res://icon.png"
+
+[debug]
+
+gdscript/warnings/unused_argument=false
+gdscript/warnings/return_value_discarded=false
 
 [display]
 

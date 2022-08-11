@@ -80,8 +80,24 @@ onready var cooldowns = {
 	"air_momentum": FrameTimer.new(AIR_MOMENTUM_FRAMES),
 }
 
+var statuses = {
+	"stun": {
+		"timer": Timer.new(),
+		"wait_time": 5,
+	},
+	"poison": {
+		"timer": Timer.new(),
+		"wait_time": 60,
+	}
+}
+
 onready var weapon = $Weapon 
 
+var MAX_HP = 100
+var hp = MAX_HP setget _set_hp
+
+func _set_hp(_hp):
+	hp = clamp(_hp, 0, MAX_HP)
 
 func _ready():
 	sm.init(self, "Idle")
@@ -110,7 +126,7 @@ func apply_velocity(_delta):
 	if sm.state_curr == "Walljump":
 		if ori != -last_velocity_move_sign:
 			change_ori(-last_velocity_move_sign)
-	else:
+	elif enablers.move:
 		change_ori(sign(get_input("dirv").x))
 	
 	if gravity_on:
@@ -167,4 +183,4 @@ func approach(a, b, amount):
 
 func _on_Hurtbox_area_entered(_area):
 	if _area is Hitbox:
-		print_debug("oh no")
+		print_debug("Ouchie! Player took %d damage!" % _area.damage)

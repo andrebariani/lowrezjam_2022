@@ -5,16 +5,13 @@ func begin():
 	e.has_control = false
 	e.gravity_on = false
 	e.cooldowns.roll.begin()
+	e.velocity_move = e.roll_speed * e.ori
 
 func run(_delta):
 	e.can_roll = false
 	
-	if e.roll_input.x != 0:
-		e.velocity_move = e.roll_speed * e.roll_input.x
-		e.velocity_jump = (e.roll_speed * 0.5) * e.roll_input.y
-	else:
-		e.velocity_move = e.roll_speed * e.ori
-		e.velocity_jump = 0
+	e.velocity_move = e.approach(e.velocity_move, 0, e.floor_friction / 2)
+	e.velocity_jump = 0
 	
 	if e.is_on_wall() and e.get_last_slide_collision().get_normal().x != e.ori:
 		e.cooldowns.roll.end()

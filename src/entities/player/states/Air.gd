@@ -29,11 +29,11 @@ func run(_delta):
 	if e.is_on_ceiling():
 		e.velocity_jump = 0
 	
-	if e.get_input("roll") and e.can_roll:
-		e.cooldowns.roll.begin()
-		e.roll_input = dir
-		end("Roll")
-	elif e.has_skill(e.WALLJUMP) and e.is_on_wall() and \
+	#if e.get_input("roll") and e.can_roll:
+	#	e.cooldowns.roll.begin()
+	#	e.roll_input = dir
+	#	end("Roll")
+	if e.has_skill(e.WALLJUMP) and e.is_on_wall() and \
 				e.get_last_slide_collision().get_normal().x != dir.x and \
 			 	dir.x != 0 and e.velocity_jump > 0:
 		e.velocity_jump = 0

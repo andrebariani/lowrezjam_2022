@@ -1,0 +1,15 @@
+[gd_resource type="Resource" load_steps=3 format=2]
+
+[ext_resource path="res://src/map/plants/plant_data.gd" type="Script" id=1]
+[ext_resource path="res://assets/player.png" type="Texture" id=2]
+
+[resource]
+script = ExtResource( 1 )
+plant_id = "PoisonSmall"
+plant_name = "Poisonoss"
+plant_yield = 3
+plant_stack = 8
+icon = ExtResource( 2 )
+effects = {
+"poison": 60
+}

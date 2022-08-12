@@ -2,6 +2,7 @@ extends Area2D
 
 var speed = 128
 var dir = Vector2.LEFT
+var plant: Resource
 
 func _physics_process(delta):
 	position += speed * delta * dir

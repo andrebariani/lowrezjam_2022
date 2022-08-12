@@ -24,8 +24,8 @@ func run(_delta):
 
 func choose_melee_state():
 	var p_sign = sign(dist_to_player.x)
-	if p_sign == e.ori:
-		end("TailSpin")
+	if rng.randi_range(0, 10) < 2:
+		end("StartDescend")
 	else:
 		end("TailSpin")
 	

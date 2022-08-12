@@ -14,7 +14,9 @@ func run(_delta):
 	if e.is_on_floor():
 		e.velocity_jump = 0
 	
-	if e.get_input("roll"):
+	if e.get_input("use") and e.equipped_plant:
+		end("Use")
+	elif e.get_input("roll"):
 		e.roll_input = Vector2.ZERO
 		end("Roll")
 	elif e.get_input("jump_jp"):

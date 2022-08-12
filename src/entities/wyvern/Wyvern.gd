@@ -63,6 +63,19 @@ var statuses = {
 	}
 }
 
+var buffs = {
+	"attack": {
+		"timer": Timer.new(),
+		"wait_time": 60,
+		"value": 0,
+	},
+	"defense": {
+		"timer": Timer.new(),
+		"wait_time": 60,
+		"value": 0,
+	}
+}
+
 func _ready():
 	stateMachine.init(self, "Sleep")
 	wyvern_body.init(self)
@@ -243,3 +256,11 @@ func approach(a, b, amount):
 		if(a < b):
 			return b
 	return a
+
+
+func get_buff(key: String):
+	if buffs.has(key):
+		if buffs[key].timer.is_stopped():
+			return 0
+		else:
+			return buffs[key].value

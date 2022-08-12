@@ -1,0 +1,15 @@
+[gd_resource type="Resource" load_steps=3 format=2]
+
+[ext_resource path="res://src/map/plants/plant_data.gd" type="Script" id=1]
+[ext_resource path="res://assets/player.png" type="Texture" id=2]
+
+[resource]
+script = ExtResource( 1 )
+plant_id = "Attacknut"
+plant_name = "Attacknut"
+plant_yield = 1
+plant_stack = 2
+icon = ExtResource( 2 )
+effects = {
+"attack": 0.1
+}

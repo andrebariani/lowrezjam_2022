@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://src/map/plants/Plant.tscn" type="PackedScene" id=1]
+[ext_resource path="res://src/map/plants/Healip.tres" type="Resource" id=2]
+
+[node name="HealipPlace" instance=ExtResource( 1 )]
+resource = ExtResource( 2 )
+
+[node name="Sprite" parent="." index="1"]
+modulate = Color( 0.12549, 1, 0, 1 )

@@ -18,7 +18,9 @@ func run(_delta):
 		e.roll_input = dir
 		end("Roll")
 	
-	if e.get_input("jump_jp"):
+	if e.get_input("use") and e.equipped_plant:
+		end("Use")
+	elif e.get_input("jump_jp"):
 		e.apply_jump(e.max_jump + e.gravity, true)
 		end("Air")
 	elif e.get_input("atk"):

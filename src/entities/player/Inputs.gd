@@ -8,6 +8,9 @@ var inputs = {
 	jump_jp = false,
 	jump_jr = false,
 	roll = false,
+	use = false,
+	gather = false,
+	switch_item = false,
 	atk = false,
 	atk_jp = false,
 	atk_jr = false
@@ -49,3 +52,9 @@ func get_inputs():
 	
 	if Input.is_action_just_pressed("roll") and player.has_skill(player.ROLL):
 		inputs.roll = true
+		
+	if Input.is_action_just_pressed("use") and not Input.is_action_pressed("move_down"):
+		inputs.use = true
+	
+	if Input.is_action_pressed("use") and Input.is_action_pressed("move_down"):
+		inputs.gather = true

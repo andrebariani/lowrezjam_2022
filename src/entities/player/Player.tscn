@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=2]
+[gd_scene load_steps=34 format=2]
 
 [ext_resource path="res://src/entities/player/Player.gd" type="Script" id=1]
 [ext_resource path="res://src/entities/state_machine/StateMachine.gd" type="Script" id=2]
@@ -12,6 +12,8 @@
 [ext_resource path="res://src/entities/player/weapons/Weapon.gd" type="Script" id=10]
 [ext_resource path="res://src/entities/Hurtbox.tscn" type="PackedScene" id=11]
 [ext_resource path="res://src/entities/Hitbox.tscn" type="PackedScene" id=12]
+[ext_resource path="res://src/entities/player/Interact.gd" type="Script" id=13]
+[ext_resource path="res://src/entities/player/states/Use.gd" type="Script" id=14]
 [ext_resource path="res://src/main_font.tres" type="DynamicFont" id=16]
 
 [sub_resource type="RectangleShape2D" id=64]
@@ -627,6 +629,9 @@ tracks/5/keys = {
 "values": [ Vector2( 1, 1 ) ]
 }
 
+[sub_resource type="Animation" id=68]
+resource_name = "Use"
+
 [sub_resource type="Animation" id=26]
 resource_name = "Walljump"
 length = 0.2
@@ -709,7 +714,10 @@ tracks/2/keys = {
 }
 
 [sub_resource type="RectangleShape2D" id=65]
-extents = Vector2( 1, 3 )
+extents = Vector2( 4, 4 )
+
+[sub_resource type="RectangleShape2D" id=67]
+extents = Vector2( 4, 3 )
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 1, 3 )
@@ -718,12 +726,6 @@ extents = Vector2( 1, 3 )
 collision_layer = 2
 script = ExtResource( 1 )
 MAX_SPEED = 42
-FLOOR_FRICTION = 8
-AIR_ACC = 4
-ROLL_SPEED = 88
-ROLL_FRAMES = 18
-WALLJUMP_FRAMES = 7
-AIR_MOMENTUM_FRAMES = 7
 SKILLS = 3
 
 [node name="Inputs" type="Node" parent="."]
@@ -746,6 +748,9 @@ script = ExtResource( 8 )
 
 [node name="Walljump" type="Node" parent="States"]
 script = ExtResource( 9 )
+
+[node name="Use" type="Node" parent="States"]
+script = ExtResource( 14 )
 
 [node name="Weapon" type="Node2D" parent="."]
 script = ExtResource( 10 )
@@ -774,6 +779,7 @@ anims/MoveStart = SubResource( 4 )
 anims/MoveStop = SubResource( 5 )
 anims/MoveTurn = SubResource( 6 )
 anims/RESET = SubResource( 66 )
+anims/Use = SubResource( 68 )
 anims/Walljump = SubResource( 26 )
 anims/Wallslide = SubResource( 27 )
 next/FallIdle = "Move"
@@ -781,7 +787,7 @@ next/FallMove = "Move"
 next/Idle = "FallIdle"
 
 [node name="Sprite" type="Sprite" parent="."]
-position = Vector2( 0, -1 )
+scale = Vector2( 1, 0.25 )
 texture = ExtResource( 7 )
 hframes = 3
 vframes = 3
@@ -794,6 +800,15 @@ collision_mask = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
 shape = SubResource( 65 )
+disabled = true
+
+[node name="Interact" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 32
+script = ExtResource( 13 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interact"]
+shape = SubResource( 67 )
 
 [node name="Collision" type="CollisionShape2D" parent="."]
 shape = SubResource( 1 )
@@ -826,6 +841,16 @@ uppercase = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="UI" type="GridContainer" parent="CanvasLayer"]
+margin_right = 40.0
+margin_bottom = 40.0
+
+[node name="ItemIcon" type="TextureRect" parent="CanvasLayer/UI"]
+
+[node name="Qtt" type="Label" parent="CanvasLayer/UI"]
+margin_top = 4.0
+margin_bottom = 10.0
 
 [connection signal="area_entered" from="Weapon/Hitbox" to="Weapon" method="_on_Hitbox_area_entered"]
 [connection signal="area_entered" from="Hurtbox" to="." method="_on_Hurtbox_area_entered"]

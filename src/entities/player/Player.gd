@@ -10,8 +10,8 @@ export (int) var AIR_ACC = 2
 export (int) var GRAVITY = 16
 export (int) var AIR_FINAL_SPEED = 128
 export (int) var COYOTE_JUMP_FRAMES = 7
-export (int) var ROLL_SPEED = 700
-export (int) var ROLL_FRAMES
+export (int) var ROLL_SPEED = 88
+export (int) var ROLL_FRAMES = 7
 export (int) var MAX_MULTIJUMP = 0
 export (int) var WALLSLIDE_SPEED = 100
 export (int) var WALLJUMP_FRAMES = 10
@@ -41,6 +41,10 @@ onready var sprite = $Sprite
 onready var animPlayer = $anim
 onready var stateMachine = $States
 onready var hurtbox = $Hurtbox
+onready var interact = $Interact
+onready var ui = $CanvasLayer/UI
+onready var item_icon = $CanvasLayer/UI/ItemIcon
+onready var item_qtt = $CanvasLayer/UI/Qtt
 
 onready var debugVelocity = $CanvasLayer/Debug/Velocity
 onready var debugState = $CanvasLayer/Debug/StateQueue
@@ -91,6 +95,19 @@ var statuses = {
 	}
 }
 
+var buffs = {
+	"attack": {
+		"timer": Timer.new(),
+		"wait_time": 60,
+		"value": 0,
+	},
+	"defense": {
+		"timer": Timer.new(),
+		"wait_time": 60,
+		"value": 0,
+	}
+}
+
 onready var weapon = $Weapon 
 
 var MAX_HP = 100
@@ -98,22 +115,60 @@ var hp = MAX_HP setget _set_hp
 
 func _set_hp(_hp):
 	hp = clamp(_hp, 0, MAX_HP)
+	print_debug("hp: %d  ->  hp: %d", [hp, _hp])
+
+onready var gathered_plant: Resource
+onready var equipped_plant: String
+onready var inventory = []
+onready var stash = {}
+onready var inventory_id = 0 setget _set_inventory_id
+
+func _set_inventory_id(_id):
+	if _id < 0:
+		inventory_id = inventory.size() - 1
+	elif _id > inventory.size() - 1:
+		inventory_id = 0
+	else:
+		inventory_id = clamp(_id, 0, inventory.size() - 1)
+	
 
 func _ready():
 	sm.init(self, "Idle")
 	inputHelper.init(self)
-	
 	weapon.init(self)
+	interact.init(self)
+	
+	for s in statuses.values():
+		s.timer.one_shot = true
+		s.timer.wait_time = s.wait_time
+		add_child(s.timer)
+		
+	for b in buffs.values():
+		b.timer.one_shot = true
+		b.timer.wait_time = b.wait_time
+		add_child(b.timer)
 
 
 func _physics_process(delta):
 	if has_control:
 		inputHelper.get_inputs()
+	if Input.is_action_just_released("switch_item_right"):
+		self.inventory_id += 1
+		setup_equipped_plant()
+	elif Input.is_action_just_released("switch_item_left"):
+		self.inventory_id -= 1
+		setup_equipped_plant()
 	
 	update_cooldowns()
 	sm.run(delta)
 	apply_velocity(delta)
 
+
+func setup_equipped_plant():
+	if inventory.size():
+		equipped_plant = inventory[self.inventory_id]
+		item_icon.texture = stash[equipped_plant].resource.icon
+		item_qtt.set_text(str(stash[equipped_plant].quantity))
 
 func apply_jump(strength := max_jump + gravity, is_floor_jump := false):
 	velocity_jump = -(strength)
@@ -183,4 +238,71 @@ func approach(a, b, amount):
 
 func _on_Hurtbox_area_entered(_area):
 	if _area is Hitbox:
-		print_debug("Ouchie! Player took %d damage!" % _area.damage)
+		var total_damage = _area.damage - (_area.damage * get_buff("defense"))
+		print_debug("Ouchie! Player took %d damage!" % _area.damage )
+		hp -= total_damage
+
+
+func gather_plant() -> bool:
+	if stash.has(gathered_plant.plant_id):
+		if stash[gathered_plant.plant_id].quantity == gathered_plant.plant_stack:
+			return false
+			
+		var new_qtde = clamp(stash[gathered_plant.plant_id].quantity + gathered_plant.plant_yield, 0, gathered_plant.plant_stack)
+		stash[gathered_plant.plant_id].quantity = new_qtde
+	else:
+		stash[gathered_plant.plant_id] = {
+			"resource": gathered_plant,
+			"quantity": gathered_plant.plant_yield,
+			"stack": gathered_plant.plant_stack
+		}
+		
+		inventory.push_back(gathered_plant.plant_id)
+	
+	equipped_plant = gathered_plant.plant_id
+	gathered_plant = null
+	
+	item_icon.texture = stash[equipped_plant].resource.icon
+	item_qtt.set_text(str(stash[equipped_plant].quantity))
+	
+	print_debug(inventory)
+	print_debug(stash)
+	return true
+
+
+func use_equipped_plant(_equipped_plant):
+	var plant = stash[_equipped_plant].resource
+	for e in plant.effects.keys():
+		if e == "heal":
+			self.hp += MAX_HP * plant.effects[e]
+		elif e == "poison":
+			# throw
+			pass
+		elif e == "stun":
+			# throw
+			pass
+		elif e in buffs:
+			buffs[e].value = plant.effects[e]
+			buffs[e].timer.start()
+			
+	stash[_equipped_plant].quantity -= 1
+	item_qtt.set_text(str(stash[equipped_plant].quantity))
+	if stash[_equipped_plant].quantity == 0:
+		stash.erase(_equipped_plant)
+		inventory.erase(_equipped_plant)
+		equipped_plant = ""
+		
+		item_icon.texture = null
+		item_qtt.set_text("")
+		
+	print_debug(inventory)
+	print_debug(stash)
+
+
+func get_buff(key: String):
+	if buffs.has(key):
+		if buffs[key].timer.is_stopped():
+			return 0
+		else:
+			return buffs[key].value
+	return null

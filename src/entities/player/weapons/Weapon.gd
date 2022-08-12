@@ -54,7 +54,6 @@ func _on_Hitbox_area_entered(_area):
 		if not hit_connections.has(_area.entity_uid):
 			_area.take_hit(hitbox_area)
 			hit_connections.push_back(_area.entity_uid)
-	# hitbox.set_deferred("disabled", true)
 
 
 func reset_hit_connections():

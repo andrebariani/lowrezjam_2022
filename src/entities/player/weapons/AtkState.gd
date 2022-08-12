@@ -16,7 +16,7 @@ onready var timer = FrameTimer.new(frames_for_next)
 
 func begin():
 	hitbox = weapon.hitbox_area
-	hitbox.damage = damage
+	hitbox.damage = damage + (damage * e.get_buff("attack"))
 	e.animPlayer.play(anim_name)
 	
 	timer.value = 0
